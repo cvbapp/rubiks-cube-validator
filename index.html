@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>a&h Rubik's cube academy</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    #camera-container, #capture-container, #result-container {
+      margin-top: 20px;
+    }
+    video, canvas {
+      width: 320px;
+      height: 240px;
+      border: 1px solid #aaa;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>a&h Rubik's cube academy</h1>
+  <div id="camera-container">
+    <video id="video" autoplay></video>
+  </div>
+  <div id="capture-container">
+    <button onclick="captureFace()">Capture Face</button>
+    <button onclick="validateCube()">Validate Cube</button>
+    <canvas id="canvas"></canvas>
+  </div>
+  <div id="result-container">
+    <h2 id="result"></h2>
+    <pre id="solution"></pre>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const result = document.getElementById('result');
+    const solution = document.getElementById('solution');
+    const context = canvas.getContext('2d');
+
+    let capturedFaces = [];
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((err) => {
+        console.error("Camera access error: ", err);
+      });
+
+    function captureFace() {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL();
+      capturedFaces.push(imageData);
+      alert(`Captured Face ${capturedFaces.length}/6`);
+    }
+
+    function validateCube() {
+      if (capturedFaces.length !== 6) {
+        alert("Please capture all 6 faces of the cube first.");
+        return;
+      }
+
+      // Dummy logic: In a real app, use color detection + validation algorithm
+      const isValid = true; // Placeholder
+
+      if (isValid) {
+        result.textContent = "Cube is valid and solvable.";
+        solution.textContent = "Easiest method (beginner):\n1. Make white cross\n2. Solve white corners\n3. Solve middle layer edges\n4. Make yellow cross\n5. Solve yellow corners\n6. Position yellow corners\n7. Position yellow edges";
+      } else {
+        result.textContent = "Cube state is invalid or unsolvable.";
+        solution.textContent = "";
+      }
+    }
+  </script>
+</body>
+</html>
