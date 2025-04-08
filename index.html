@@ -1,98 +1,83 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>a&h Rubik's cube academy</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f0f0f0;
-      margin: 0;
-      padding: 20px;
+      font-family: Arial, sans-serif;
       text-align: center;
-    }
-    h1 {
-      color: #333;
-    }
-    #camera-container, #capture-container, #result-container {
-      margin-top: 20px;
+      padding: 20px;
     }
     video, canvas {
       width: 320px;
       height: 240px;
-      border: 1px solid #aaa;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
     }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      background: #4caf50;
-      color: white;
-      cursor: pointer;
+    .face-label {
+      margin-top: 10px;
+      font-weight: bold;
     }
-    button:hover {
-      background: #45a049;
+    .face-preview img {
+      width: 100px;
+      height: 100px;
+      margin: 5px;
+      border: 2px solid #666;
     }
   </style>
 </head>
 <body>
   <h1>a&h Rubik's cube academy</h1>
-  <div id="camera-container">
-    <video id="video" autoplay></video>
-  </div>
-  <div id="capture-container">
-    <button onclick="captureFace()">Capture Face</button>
-    <button onclick="validateCube()">Validate Cube</button>
-    <canvas id="canvas"></canvas>
-  </div>
-  <div id="result-container">
-    <h2 id="result"></h2>
-    <pre id="solution"></pre>
-  </div>
+  <video id="video" autoplay></video>
+  <br/>
+  <button onclick="captureFace()">Capture Face</button>
+  <button onclick="validateCube()">Validate Cube</button>
+  <div class="face-label" id="faceLabel">Next: Yellow Face</div>
+  <div id="facePreview" class="face-preview"></div>
+  <div id="validationResult"></div>
 
+  <script src="validator.js"></script>
   <script>
     const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const result = document.getElementById('result');
-    const solution = document.getElementById('solution');
-    const context = canvas.getContext('2d');
+    const faceLabel = document.getElementById('faceLabel');
+    const facePreview = document.getElementById('facePreview');
+    const result = document.getElementById('validationResult');
 
-    let capturedFaces = [];
+    const faceNames = ['Yellow Face', 'White Face', 'Red Face', 'Orange Face', 'Blue Face', 'Green Face'];
+    const capturedImages = [];
 
     navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
+      .then(stream => {
         video.srcObject = stream;
-      })
-      .catch((err) => {
-        console.error("Camera access error: ", err);
       });
 
     function captureFace() {
+      if (capturedImages.length >= 6) {
+        alert("All 6 faces already captured!");
+        return;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 240;
+      const context = canvas.getContext('2d');
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = canvas.toDataURL();
-      capturedFaces.push(imageData);
-      alert(`Captured Face ${capturedFaces.length}/6`);
+      const image = new Image();
+      image.src = canvas.toDataURL();
+      facePreview.appendChild(image);
+      capturedImages.push(image.src);
+      if (capturedImages.length < 6) {
+        faceLabel.innerText = "Next: " + faceNames[capturedImages.length];
+      } else {
+        faceLabel.innerText = "All faces captured.";
+      }
     }
 
     function validateCube() {
-      if (capturedFaces.length !== 6) {
-        alert("Please capture all 6 faces of the cube first.");
-        return;
-      }
-
-      // Dummy logic: In a real app, use color detection + validation algorithm
-      const isValid = true; // Placeholder
-
-      if (isValid) {
-        result.textContent = "Cube is valid and solvable.";
-        solution.textContent = "Easiest method (beginner):\n1. Make white cross\n2. Solve white corners\n3. Solve middle layer edges\n4. Make yellow cross\n5. Solve yellow corners\n6. Position yellow corners\n7. Position yellow edges";
-      } else {
-        result.textContent = "Cube state is invalid or unsolvable.";
-        solution.textContent = "";
-      }
+      const isValid = validateCubeConfiguration(); // From validator.js
+      result.innerText = isValid ? "✅ Cube is solvable!" : "❌ Invalid cube: this configuration is not solvable.";
     }
   </script>
 </body>
