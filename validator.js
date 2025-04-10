@@ -2,6 +2,7 @@
 const video = document.getElementById('video');
 const faceLabel = document.getElementById('faceLabel');
 const facePreview = document.getElementById('facePreview');
+const faceDebug = document.getElementById('faceDebug');
 const result = document.getElementById('validationResult');
 
 const faceNames = ['Yellow Face', 'White Face', 'Red Face', 'Orange Face', 'Blue Face', 'Green Face'];
@@ -13,6 +14,7 @@ navigator.mediaDevices.getUserMedia({ video: true })
 function resetCapture() {
   capturedImages.length = 0;
   facePreview.innerHTML = '';
+  faceDebug.innerHTML = '';
   result.innerText = '';
   faceLabel.innerText = "Next: " + faceNames[0];
 }
@@ -28,7 +30,6 @@ function captureFace() {
   canvas.height = 240;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
   const colors = [];
   for (let row = 0; row < 3; row++) {
@@ -46,11 +47,23 @@ function captureFace() {
   img.src = canvas.toDataURL();
   facePreview.appendChild(img);
 
+  showDebugColors();
+
   if (capturedImages.length < 6) {
     faceLabel.innerText = "Next: " + faceNames[capturedImages.length];
   } else {
     faceLabel.innerText = "All faces captured.";
   }
+}
+
+function showDebugColors() {
+  faceDebug.innerHTML = '';
+  capturedImages.forEach((face, i) => {
+    faceDebug.innerHTML += `<div style='width:100%;margin-top:10px'><strong>${faceNames[i]}</strong></div>`;
+    face.forEach(color => {
+      faceDebug.innerHTML += `<div style="background:${color};color:#000">${color}</div>`;
+    });
+  });
 }
 
 function validateCube() {

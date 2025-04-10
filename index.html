@@ -10,6 +10,8 @@
     video, canvas { width: 320px; height: 240px; border: 1px solid #ccc; margin-bottom: 10px; }
     .face-label { margin-top: 10px; font-weight: bold; }
     .face-preview img { width: 100px; height: 100px; margin: 5px; border: 2px solid #666; }
+    .face-debug { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+    .face-debug div { border: 1px solid #ccc; width: 80px; height: 80px; margin: 3px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
     button { margin: 5px; padding: 10px 15px; }
   </style>
 </head>
@@ -22,6 +24,7 @@
   <button onclick="resetCapture()">Reset</button>
   <div class="face-label" id="faceLabel">Next: Yellow Face</div>
   <div id="facePreview" class="face-preview"></div>
+  <div id="faceDebug" class="face-debug"></div>
   <div id="validationResult"></div>
 
   <script src="validator.js"></script>
