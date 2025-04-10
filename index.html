@@ -6,27 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>a&h Rubik's cube academy</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    video, canvas {
-      width: 320px;
-      height: 240px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-    }
-    .face-label {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .face-preview img {
-      width: 100px;
-      height: 100px;
-      margin: 5px;
-      border: 2px solid #666;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    video, canvas { width: 320px; height: 240px; border: 1px solid #ccc; margin-bottom: 10px; }
+    .face-label { margin-top: 10px; font-weight: bold; }
+    .face-preview img { width: 100px; height: 100px; margin: 5px; border: 2px solid #666; }
+    button { margin: 5px; padding: 10px 15px; }
   </style>
 </head>
 <body>
@@ -35,50 +19,11 @@
   <br/>
   <button onclick="captureFace()">Capture Face</button>
   <button onclick="validateCube()">Validate Cube</button>
+  <button onclick="resetCapture()">Reset</button>
   <div class="face-label" id="faceLabel">Next: Yellow Face</div>
   <div id="facePreview" class="face-preview"></div>
   <div id="validationResult"></div>
 
   <script src="validator.js"></script>
-  <script>
-    const video = document.getElementById('video');
-    const faceLabel = document.getElementById('faceLabel');
-    const facePreview = document.getElementById('facePreview');
-    const result = document.getElementById('validationResult');
-
-    const faceNames = ['Yellow Face', 'White Face', 'Red Face', 'Orange Face', 'Blue Face', 'Green Face'];
-    const capturedImages = [];
-
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
-        video.srcObject = stream;
-      });
-
-    function captureFace() {
-      if (capturedImages.length >= 6) {
-        alert("All 6 faces already captured!");
-        return;
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = 320;
-      canvas.height = 240;
-      const context = canvas.getContext('2d');
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const image = new Image();
-      image.src = canvas.toDataURL();
-      facePreview.appendChild(image);
-      capturedImages.push(image.src);
-      if (capturedImages.length < 6) {
-        faceLabel.innerText = "Next: " + faceNames[capturedImages.length];
-      } else {
-        faceLabel.innerText = "All faces captured.";
-      }
-    }
-
-    function validateCube() {
-      const isValid = validateCubeConfiguration(); // From validator.js
-      result.innerText = isValid ? "✅ Cube is solvable!" : "❌ Invalid cube: this configuration is not solvable.";
-    }
-  </script>
 </body>
 </html>
