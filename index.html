@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,26 +6,31 @@
   <title>a&h Rubik's cube academy</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-    video, canvas { width: 320px; height: 240px; border: 1px solid #ccc; margin-bottom: 10px; }
+    .video-container { position: relative; display: inline-block; }
+    video, canvas.overlay { width: 320px; height: 240px; border: 1px solid #ccc; }
+    canvas.overlay { position: absolute; top: 0; left: 0; pointer-events: none; }
     .face-label { margin-top: 10px; font-weight: bold; }
-    .face-preview img { width: 100px; height: 100px; margin: 5px; border: 2px solid #666; }
-    .face-debug { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-    .face-debug div { border: 1px solid #ccc; width: 80px; height: 80px; margin: 3px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .face-grid { display: grid; grid-template-columns: repeat(3, 30px); gap: 5px; justify-content: center; margin: 10px auto; }
+    .face-grid div { width: 30px; height: 30px; border: 1px solid #000; cursor: pointer; }
+    #buttons { margin-top: 20px; }
     button { margin: 5px; padding: 10px 15px; }
   </style>
 </head>
 <body>
   <h1>a&h Rubik's cube academy</h1>
-  <video id="video" autoplay></video>
-  <br/>
-  <button onclick="captureFace()">Capture Face</button>
-  <button onclick="validateCube()">Validate Cube</button>
-  <button onclick="resetCapture()">Reset</button>
+  <div class="video-container">
+    <video id="video" autoplay></video>
+    <canvas class="overlay" id="overlayCanvas"></canvas>
+  </div>
   <div class="face-label" id="faceLabel">Next: Yellow Face</div>
-  <div id="facePreview" class="face-preview"></div>
-  <div id="faceDebug" class="face-debug"></div>
+  <button onclick="captureFace()">Capture Face</button>
+  <div id="faceGrids"></div>
+  <div id="buttons">
+    <button onclick="validateCube()">Validate Cube</button>
+    <button onclick="resetCapture()">Reset</button>
+  </div>
   <div id="validationResult"></div>
-
+  <input type="color" id="colorPicker" class="color-picker" />
   <script src="validator.js"></script>
 </body>
 </html>
