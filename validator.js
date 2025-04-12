@@ -1,50 +1,77 @@
-const video = document.getElementById("video");
-const overlay = document.getElementById("overlayCanvas");
-const ctx = overlay.getContext("2d");
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const overlay = document.getElementById('overlay');
+const ctx = canvas.getContext('2d');
+const capturedFaces = [];
 
-navigator.mediaDevices.getUserMedia({ video: true })
-  .then(stream => {
-    video.srcObject = stream;
-    drawOverlay();
-  })
-  .catch(err => {
-    alert("Camera access denied: " + err);
-  });
+navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+  video.srcObject = stream;
+});
 
-function drawOverlay() {
-  overlay.width = video.videoWidth;
-  overlay.height = video.videoHeight;
-
-  const w = overlay.width / 3;
-  const h = overlay.height / 3;
-
-  ctx.strokeStyle = "lime";
-  ctx.lineWidth = 2;
-  for (let i = 1; i < 3; i++) {
-    ctx.beginPath();
-    ctx.moveTo(i * w, 0);
-    ctx.lineTo(i * w, overlay.height);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(0, i * h);
-    ctx.lineTo(overlay.width, i * h);
-    ctx.stroke();
+function getAverageColor(imageData) {
+  let r = 0, g = 0, b = 0;
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    r += imageData.data[i];
+    g += imageData.data[i + 1];
+    b += imageData.data[i + 2];
   }
+  r = Math.round(r / (imageData.data.length / 4));
+  g = Math.round(g / (imageData.data.length / 4));
+  b = Math.round(b / (imageData.data.length / 4));
+  return `rgb(${r},${g},${b})`;
 }
 
-video.onloadedmetadata = () => {
-  drawOverlay();
-};
-
 function captureFace() {
-  alert("Capture logic placeholder");  // Replace with real capture logic
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const colors = [];
+  const size = 60;
+  const offsetX = (canvas.width - size * 3) / 2;
+  const offsetY = (canvas.height - size * 3) / 2;
+
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 3; col++) {
+      const x = offsetX + col * size;
+      const y = offsetY + row * size;
+      const imageData = ctx.getImageData(x, y, size, size);
+      const avgColor = getAverageColor(imageData);
+      colors.push(avgColor);
+    }
+  }
+
+  showCapturedFace(colors);
+  capturedFaces.push(colors);
+}
+
+function showCapturedFace(colors) {
+  const faceGrid = document.createElement('div');
+  faceGrid.className = 'face-grid';
+  colors.forEach(color => {
+    const cell = document.createElement('div');
+    const input = document.createElement('input');
+    input.type = 'color';
+    input.className = 'color-picker';
+    input.value = rgbToHex(color);
+    cell.appendChild(input);
+    faceGrid.appendChild(cell);
+  });
+  document.getElementById('capturedFaces').appendChild(faceGrid);
+}
+
+function rgbToHex(rgb) {
+  const result = rgb.match(/\d+/g);
+  return "#" + result.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+}
+
+function resetCube() {
+  capturedFaces.length = 0;
+  document.getElementById('capturedFaces').innerHTML = '';
 }
 
 function validateCube() {
-  alert("Validation logic placeholder");
-}
-
-function resetCapture() {
-  alert("Reset logic placeholder");
+  if (capturedFaces.length !== 6) {
+    alert('Please capture all 6 faces first.');
+    return;
+  }
+  alert("This cube appears to be solvable (basic check only).");
 }

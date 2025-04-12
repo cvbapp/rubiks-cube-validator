@@ -2,35 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>a&h Rubik's cube academy</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-    .video-container { position: relative; display: inline-block; }
-    video, canvas.overlay { width: 320px; height: 240px; border: 1px solid #ccc; }
-    canvas.overlay { position: absolute; top: 0; left: 0; pointer-events: none; }
-    .face-label { margin-top: 10px; font-weight: bold; }
-    .face-grid { display: grid; grid-template-columns: repeat(3, 30px); gap: 5px; justify-content: center; margin: 10px auto; }
-    .face-grid div { width: 30px; height: 30px; border: 1px solid #000; cursor: pointer; }
-    #buttons { margin-top: 20px; }
-    button { margin: 5px; padding: 10px 15px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    video {
+      border: 2px solid #333;
+    }
+    canvas {
+      display: none;
+    }
+    .overlay {
+      position: absolute;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 180px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      pointer-events: none;
+    }
+    .overlay div {
+      border: 1px solid lime;
+    }
+    .face-grid {
+      display: inline-grid;
+      grid-template-columns: repeat(3, 30px);
+      grid-gap: 2px;
+      margin: 10px;
+    }
+    .face-grid div {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #999;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
+    .color-picker {
+      width: 100%;
+      height: 100%;
+      border: none;
+      padding: 0;
+    }
   </style>
 </head>
 <body>
   <h1>a&h Rubik's cube academy</h1>
-  <div class="video-container">
-    <video id="video" autoplay></video>
-    <canvas class="overlay" id="overlayCanvas"></canvas>
+
+  <video id="video" width="320" height="240" autoplay></video>
+  <canvas id="canvas" width="320" height="240"></canvas>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="buttons">
+    <button onclick="captureFace()">Capture Face</button>
+    <button onclick="validateCube()">Validate</button>
+    <button onclick="resetCube()">Reset</button>
   </div>
-  <div class="face-label" id="faceLabel">Next: Yellow Face</div>
-  <button onclick="captureFace()">Capture Face</button>
-  <div id="faceGrids"></div>
-  <div id="buttons">
-    <button onclick="validateCube()">Validate Cube</button>
-    <button onclick="resetCapture()">Reset</button>
-  </div>
-  <div id="validationResult"></div>
-  <input type="color" id="colorPicker" class="color-picker" />
-  <script src="validator.js"></script>
+
+  <h3>Captured Faces</h3>
+  <div id="capturedFaces"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
